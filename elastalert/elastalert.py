@@ -1504,16 +1504,16 @@ class ElastAlerter(object):
         # Instead use the 'document' parameter.
         # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
         if es.is_atleasteight():
-          res = es.index(index='.kibana*',
-                         body=db_body)
+            res = es.index(index='.kibana*',
+                           body=db_body)
         elif es.is_atleastsixtwo():
-          res = es.index(index='.kibana*',
-                         doc_type='_doc',
-                         body=db_body)
+            res = es.index(index='.kibana*',
+                           doc_type='_doc',
+                           body=db_body)
         else:
-            res = es.index(index='kibana-int',
-                            doc_type='temp',
-                            body=db_body)
+            res = es.index(index='.kibana*',
+                           doc_type='temp',
+                           body=db_body)
 
         # Return dashboard URL
         kibana_url = rule.get('kibana_url')
