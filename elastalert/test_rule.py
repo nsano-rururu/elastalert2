@@ -212,6 +212,10 @@ class MockElastAlerter(object):
 
         # Get one document for schema
         try:
+            # TODO:
+            # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             res = es_client.search(index=index, size=1, body=query, ignore_unavailable=True)
         except Exception as e:
             print("Error running your filter:", file=sys.stderr)
@@ -225,7 +229,8 @@ class MockElastAlerter(object):
             return []
 
         terms = res['hits']['hits'][0]['_source']
-        doc_type = res['hits']['hits'][0]['_type']
+        if not es_client.is_atleasteight():
+            doc_type = res['hits']['hits'][0]['_type']
 
         # Get a count of all docs
         count_query = ElastAlerter.get_query(
@@ -238,7 +243,10 @@ class MockElastAlerter(object):
             five=conf['five']
         )
         try:
-            res = es_client.count(index=index, doc_type=doc_type, body=count_query, ignore_unavailable=True)
+            if es_client.is_atleasteight():
+                res = es_client.count(index=index, body=count_query, ignore_unavailable=True)
+            else:
+                res = es_client.count(index=index, doc_type=doc_type, body=count_query, ignore_unavailable=True)
         except Exception as e:
             print("Error querying Elasticsearch:", file=sys.stderr)
             print(repr(e)[:2048], file=sys.stderr)
@@ -285,6 +293,10 @@ class MockElastAlerter(object):
         # Download up to max_query_size (defaults to 10,000) documents to save
         if (self.args.save or self.args.formatted_output) and not self.args.count:
             try:
+                # TODO:
+                # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+                # Instead use API parameters directly.
+                # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
                 res = es_client.search(index=index, size=self.args.max_query_size, body=query, ignore_unavailable=True)
             except Exception as e:
                 print("Error running your filter:", file=sys.stderr)

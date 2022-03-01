@@ -79,8 +79,6 @@ def create_index_mappings(es_client, ea_index, recreate=False, old_ea_index=None
         es_client.indices.put_mapping(index=ea_index + '_past',
                                       body=es_index_mappings['past_elastalert'])
     elif is_atleastseven(esversion):
-        # TODO remove doc_type completely when elasicsearch client allows doc_type=None
-        # doc_type is a deprecated feature and will be completely removed in Elasicsearch 8
         es_client.indices.put_mapping(index=ea_index, doc_type='_doc',
                                       body=es_index_mappings['elastalert'], include_type_name=True)
         es_client.indices.put_mapping(index=ea_index + '_status', doc_type='_doc',

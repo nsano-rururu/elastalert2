@@ -442,6 +442,7 @@ class RulesLoader(object):
                             'generate_kibana_link is incompatible with filters other than term, query_string and range.'
                             'Consider creating a dashboard and using use_kibana_dashboard instead.')
 
+        # TODO: For Elasticsearch 8, the following checks are not required
         # Check that doc_type is provided if use_count/terms_query
         if rule.get('use_count_query') or rule.get('use_terms_query'):
             if 'doc_type' not in rule:

@@ -291,6 +291,10 @@ class ElastAlerter(object):
         """
         query = {'sort': {timestamp_field: {'order': 'asc'}}}
         try:
+            # TODO:
+            # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             if self.thread_data.current_es.is_atleastsixsix():
                 res = self.thread_data.current_es.search(index=index, size=1, body=query,
                                                          _source_includes=[timestamp_field], ignore_unavailable=True)
@@ -334,6 +338,7 @@ class ElastAlerter(object):
             set_es_key(hit['_source'], rule['timestamp_field'], rule['ts_to_dt'](ts))
             set_es_key(hit, rule['timestamp_field'], lookup_es_key(hit['_source'], rule['timestamp_field']))
 
+            # TODO: ES8 KeyError: '_type'
             # Tack metadata fields into _source
             for field in ['_id', '_index', '_type']:
                 if field in hit:
@@ -383,6 +388,10 @@ class ElastAlerter(object):
             if scroll:
                 res = self.thread_data.current_es.scroll(scroll_id=rule['scroll_id'], scroll=scroll_keepalive)
             else:
+                # TODO:
+                # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+                # Instead use API parameters directly.
+                # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
                 res = self.thread_data.current_es.search(
                     scroll=scroll_keepalive,
                     index=index,
@@ -433,9 +442,10 @@ class ElastAlerter(object):
 
         hits = self.process_hits(rule, hits)
 
-        # Record doc_type for use in get_top_counts
-        if 'doc_type' not in rule and len(hits):
-            rule['doc_type'] = hits[0]['_type']
+        if not self.thread_data.current_es.is_atleasteight():
+            # Record doc_type for use in get_top_counts
+            if 'doc_type' not in rule and len(hits):
+                rule['doc_type'] = hits[0]['_type']
         return hits
 
     def get_hits_count(self, rule, starttime, endtime, index):
@@ -528,13 +538,21 @@ class ElastAlerter(object):
 
         try:
             if not rule['five']:
-                res = self.thread_data.current_es.deprecated_search(
-                    index=index,
-                    doc_type=rule['doc_type'],
-                    body=query,
-                    search_type='count',
-                    ignore_unavailable=True
-                )
+                if self.thread_data.current_es.is_atleasteight():
+                    res = self.thread_data.current_es.deprecated_search(
+                        index=index,
+                        body=query,
+                        search_type='count',
+                        ignore_unavailable=True
+                    )
+                else:
+                    res = self.thread_data.current_es.deprecated_search(
+                        index=index,
+                        doc_type=rule['doc_type'],
+                        body=query,
+                        search_type='count',
+                        ignore_unavailable=True
+                    )
             else:
                 res = self.thread_data.current_es.deprecated_search(index=index, doc_type=rule['doc_type'],
                                                                     body=query, size=0, ignore_unavailable=True)
@@ -577,13 +595,21 @@ class ElastAlerter(object):
         query = self.get_aggregation_query(base_query, rule, query_key, term_size, rule['timestamp_field'])
         try:
             if not rule['five']:
-                res = self.thread_data.current_es.deprecated_search(
-                    index=index,
-                    doc_type=rule.get('doc_type'),
-                    body=query,
-                    search_type='count',
-                    ignore_unavailable=True
-                )
+                if self.thread_data.current_es.is_atleasteight():
+                    res = self.thread_data.current_es.deprecated_search(
+                        index=index,
+                        body=query,
+                        search_type='count',
+                        ignore_unavailable=True
+                    )
+                else:
+                    res = self.thread_data.current_es.deprecated_search(
+                        index=index,
+                        doc_type=rule.get('doc_type'),
+                        body=query,
+                        search_type='count',
+                        ignore_unavailable=True
+                    )
             else:
                 res = self.thread_data.current_es.deprecated_search(index=index, doc_type=rule.get('doc_type'),
                                                                     body=query, size=0, ignore_unavailable=True)
@@ -713,6 +739,10 @@ class ElastAlerter(object):
         try:
             doc_type = 'elastalert_status'
             index = self.writeback_es.resolve_writeback_index(self.writeback_index, doc_type)
+            # TODO:
+            # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             if self.writeback_es.is_atleastsixtwo():
                 if self.writeback_es.is_atleastsixsix():
                     res = self.writeback_es.search(index=index, size=1, body=query,
@@ -1469,10 +1499,21 @@ class ElastAlerter(object):
 
         # Upload
         es = elasticsearch_client(rule)
-        # TODO: doc_type = _doc for elastic >= 6
-        res = es.index(index='kibana-int',
-                       doc_type='temp',
-                       body=db_body)
+        # TODO: 
+        # The 'body' parameter is deprecated for the 'index' API and will be removed in a future version.
+        # Instead use the 'document' parameter.
+        # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
+        if es.is_atleasteight():
+          res = es.index(index='.kibana*',
+                         body=db_body)
+        elif es.is_atleastsixtwo():
+          res = es.index(index='.kibana*',
+                         doc_type='_doc',
+                         body=db_body)
+        else:
+            res = es.index(index='kibana-int',
+                            doc_type='temp',
+                            body=db_body)
 
         # Return dashboard URL
         kibana_url = rule.get('kibana_url')
@@ -1691,6 +1732,10 @@ class ElastAlerter(object):
 
         try:
             index = self.writeback_es.resolve_writeback_index(self.writeback_index, doc_type)
+            # TODO: 
+            # The 'body' parameter is deprecated for the 'index' API and will be removed in a future version.
+            # Instead use the 'document' parameter.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             if self.writeback_es.is_atleastsixtwo():
                 res = self.writeback_es.index(index=index, body=body)
             else:
@@ -1717,6 +1762,10 @@ class ElastAlerter(object):
             query = {'query': inner_query, 'filter': time_filter}
         query.update(sort)
         try:
+            # TODO:
+            # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             if self.writeback_es.is_atleastsixtwo():
                 res = self.writeback_es.search(index=self.writeback_index, body=query, size=1000)
             else:
@@ -1806,6 +1855,10 @@ class ElastAlerter(object):
         query = {'query': {'query_string': {'query': 'aggregate_id:"%s"' % (_id)}}, 'sort': {'@timestamp': 'asc'}}
         matches = []
         try:
+            # TODO:
+            # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             if self.writeback_es.is_atleastsixtwo():
                 res = self.writeback_es.search(index=self.writeback_index, body=query,
                                                size=self.max_aggregation)
@@ -1833,6 +1886,10 @@ class ElastAlerter(object):
             query = {'query': {'bool': query}}
         query['sort'] = {'alert_time': {'order': 'desc'}}
         try:
+            # TODO:
+            # The 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information
             if self.writeback_es.is_atleastsixtwo():
                 res = self.writeback_es.search(index=self.writeback_index, body=query, size=1)
             else:
@@ -1983,6 +2040,10 @@ class ElastAlerter(object):
         try:
             doc_type = 'silence'
             index = self.writeback_es.resolve_writeback_index(self.writeback_index, doc_type)
+            # TODO:
+            # 'body' parameter is deprecated for the 'search' API and will be removed in a future version.
+            # Instead use API parameters directly.
+            # See https://github.com/elastic/elasticsearch-py/issues/1698 for more information 
             if self.writeback_es.is_atleastsixtwo():
                 if self.writeback_es.is_atleastsixsix():
                     res = self.writeback_es.search(index=index, size=1, body=query,
