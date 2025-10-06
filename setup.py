@@ -38,7 +38,6 @@ setup(
         'boto3>=1.34.54',
         'cffi>=1.16.0',
         'croniter>=2.0.2',
-        'elasticsearch==7.10.1',
         'envparse>=0.2.0',
         'exotel==0.1.5',
         'Jinja2>=3.1.3',
@@ -58,5 +57,11 @@ setup(
         'tencentcloud-sdk-python>=3.0.1098',
         'texttable>=1.7.0',
         'twilio>=8.13.0',
-    ]
+    ],
+    extras_require={
+        # Default: Install elasticsearch-py for Elasticsearch compatibility
+        'elasticsearch': ['elasticsearch==7.10.1'],
+        # Alternative: Install opensearch-py for OpenSearch compatibility
+        'opensearch': ['opensearch-py>=2.0.0'],
+    }
 )

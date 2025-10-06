@@ -1,8 +1,8 @@
 import os
 import yaml
 from datetime import datetime
-from elasticsearch.exceptions import TransportError
 from elastalert.alerts import Alerter
+from elastalert.elasticsearch_compat import TransportError
 from elastalert.util import lookup_es_key, EAException, elastalert_logger, elasticsearch_client
 
 class IndexerAlerter(Alerter):

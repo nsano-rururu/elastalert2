@@ -13,7 +13,7 @@ from six import string_types
 
 from elastalert import ElasticSearchClient
 from elastalert.auth import Auth
-from elasticsearch.exceptions import TransportError
+from elastalert.elasticsearch_compat import TransportError
 
 logging.basicConfig()
 logging.captureWarnings(True)

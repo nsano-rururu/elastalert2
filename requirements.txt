@@ -3,7 +3,9 @@ aws-requests-auth>=0.4.3
 boto3>=1.35.92
 cffi>=1.17.1
 croniter>=6.0.0
+# Choose one of the following (elasticsearch-py OR opensearch-py):
 elasticsearch==7.10.1
+# opensearch-py>=2.0.0  # Uncomment this and comment out elasticsearch if using OpenSearch
 envparse>=0.2.0
 exotel==0.1.5
 Jinja2>=3.1.5
