@@ -470,6 +470,42 @@ How do I migrate from Elastic 8 to Elastic 9?
 
 ElastAlert 2 supports Elasticsearch 9. No manual ElastAlert 2 steps are required, however Elastic does require that the Elasticsearch cluster first be upgraded to 8.18 before proceeding to 9.x.
 
+Can I use opensearch-py instead of elasticsearch-py?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes! ElastAlert 2 supports using either ``elasticsearch-py`` or ``opensearch-py`` as the Python client library.
+
+By default, ElastAlert 2 installs with ``elasticsearch-py``, which works with both Elasticsearch and OpenSearch clusters. However, if you prefer to use the native OpenSearch Python client, you can install ``opensearch-py`` instead.
+
+**To use opensearch-py:**
+
+When installing ElastAlert 2, use the ``opensearch`` extra:
+
+.. code-block:: bash
+
+    pip install elastalert2[opensearch]
+
+Or if installing from source:
+
+.. code-block:: bash
+
+    pip install -e .[opensearch]
+
+Alternatively, you can manually install opensearch-py:
+
+.. code-block:: bash
+
+    pip uninstall elasticsearch
+    pip install opensearch-py
+
+**How it works:**
+
+ElastAlert 2 includes a compatibility layer that automatically detects which library is installed and uses the appropriate imports. Both libraries provide similar APIs, so ElastAlert 2 can work with either one seamlessly.
+
+The OpenSearch detection logic (which maps OpenSearch versions to equivalent Elasticsearch versions for API compatibility) continues to work with both client libraries.
+
+**Note:** You must have either ``elasticsearch-py`` OR ``opensearch-py`` installed, but not both. If neither is installed, ElastAlert 2 will display a helpful error message.
+
 Support multiple sns_topic_arn in Alert Amazon SNS(Simple Notification Service)?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

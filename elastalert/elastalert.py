@@ -23,12 +23,14 @@ import pytz
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.executors.pool import ThreadPoolExecutor
 from croniter import croniter
-from elasticsearch.exceptions import ConnectionError
-from elasticsearch.exceptions import ElasticsearchException
-from elasticsearch.exceptions import NotFoundError
-from elasticsearch.exceptions import TransportError
 
 from elastalert.alerters.debug import DebugAlerter
+from elastalert.elasticsearch_compat import (
+    ConnectionError,
+    ElasticsearchException,
+    NotFoundError,
+    TransportError
+)
 from elastalert.config import load_conf
 from elastalert.enhancements import DropMatchException
 from elastalert.kibana_discover import generate_kibana_discover_url

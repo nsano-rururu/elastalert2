@@ -2,11 +2,13 @@
 import copy
 import elastalert.eql as eql
 
-from elasticsearch import Elasticsearch
-from elasticsearch import RequestsHttpConnection
-from elasticsearch.client import _make_path
-from elasticsearch.client import query_params
-from elasticsearch.exceptions import TransportError
+from elastalert.elasticsearch_compat import (
+    Elasticsearch,
+    RequestsHttpConnection,
+    _make_path,
+    query_params,
+    TransportError
+)
 
 
 class ElasticSearchClient(Elasticsearch):

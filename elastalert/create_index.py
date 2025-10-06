@@ -6,15 +6,17 @@ import json
 import os
 import time
 
-import elasticsearch.helpers
 import yaml
-from elasticsearch import RequestsHttpConnection
-from elasticsearch.client import Elasticsearch
-from elasticsearch.client import IndicesClient
-from elasticsearch.exceptions import NotFoundError
 from envparse import Env
 
 from elastalert.auth import Auth
+from elastalert.elasticsearch_compat import (
+    Elasticsearch,
+    RequestsHttpConnection,
+    IndicesClient,
+    NotFoundError,
+    helpers
+)
 from elastalert.util import get_version_from_cluster_info
 
 env = Env(ES_USE_SSL=bool)
@@ -90,7 +92,7 @@ def create_index_mappings(es_client, ea_index, recreate=False, old_ea_index=None
     if old_ea_index:
         print("Copying all data from old index '{0}' to new index '{1}'".format(old_ea_index, ea_index))
         # Use the defaults for chunk_size, scroll, scan_kwargs, and bulk_kwargs
-        elasticsearch.helpers.reindex(es_client, old_ea_index, ea_index)
+        helpers.reindex(es_client, old_ea_index, ea_index)
 
     print('Done!')
 
