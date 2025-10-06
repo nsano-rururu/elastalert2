@@ -159,6 +159,10 @@ You can either install the latest released version of ElastAlert 2 using pip::
 
     $ pip install elastalert2
 
+For OpenSearch users, you can optionally use the native opensearch-py client::
+
+    $ pip install elastalert2[opensearch]
+
 or you can clone the ElastAlert2 repository for the most recent changes::
 
     $ git clone https://github.com/jertel/elastalert2.git
@@ -167,6 +171,12 @@ Install the module::
 
     $ pip install "setuptools>=11.3"
     $ python setup.py install
+
+Or for OpenSearch::
+
+    $ pip install "setuptools>=11.3"
+    $ python setup.py install
+    $ pip install opensearch-py
 
 Next, open up ``examples/config.yaml.example``. In it, you will find several configuration
 options. ElastAlert 2 may be run without changing any of these settings.

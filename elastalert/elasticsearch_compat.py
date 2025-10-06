@@ -26,10 +26,10 @@ try:
         NotFoundError
     )
     import elasticsearch.helpers as helpers
-    
+
     # Flag to indicate which library is being used
     USING_OPENSEARCH = False
-    
+
 except ImportError:
     # Fall back to opensearch-py if elasticsearch-py is not available
     try:
@@ -45,10 +45,10 @@ except ImportError:
             NotFoundError
         )
         import opensearchpy.helpers as helpers
-        
+
         # Flag to indicate which library is being used
         USING_OPENSEARCH = True
-        
+
     except ImportError:
         raise ImportError(
             "Either elasticsearch-py or opensearch-py must be installed. "
