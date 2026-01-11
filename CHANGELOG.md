@@ -1,6 +1,17 @@
 # 2.TBD.TBD
 
 ## Breaking changes
+- None
+
+## New features
+- None
+
+## Other changes
+- None
+
+# 2.28.0
+
+## Breaking changes
 - metric_agg_script with metric_agg_type: percentiles now applies the percentile_range to the Elasticsearch query. Previously, this was ignored and ElastAlert2 always evaluated the first percentile (p1). If you relied on that behavior, you may need to update your configuration. - [#1738](https://github.com/jertel/elastalert2/pull/1738) - @koooommmm
 
 ## New features
