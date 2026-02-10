@@ -35,6 +35,7 @@ or
       - iris
       - jira
       - lark
+      - line
       - matrixhookshot
       - mattermost
       - ms_teams
@@ -308,7 +309,7 @@ Alertmanager
 ~~~~~~~~~~~~
 
 This alert type will send alerts to Alertmanager postAlerts. ``alert_subject`` and ``alert_text`` are passed as the annotations labeled ``summary`` and ``description`` accordingly. The labels can be changed.
-See https://prometheus.io/docs/alerting/clients/ for more details about the Alertmanager alert format.
+See https://prometheus.io/docs/alerting/latest/alerts_api/ for more details about the Alertmanager alert format.
 
 Required:
 
@@ -965,10 +966,10 @@ Optional:
 
 ``gelf_timeout``: Custom timeout.
 
-Grafana OnCall
-~~~~~~~~~~~~~~
+Grafana IRM
+~~~~~~~~~~~~
 
-https://grafana.com/docs/oncall/latest/integrations/elastalert/
+https://grafana.com/docs/grafana-cloud/alerting-and-irm/irm/configure/integrations/integration-reference/oncall/elastalert/
 
 HTTP POST
 ~~~~~~~~~
@@ -1377,6 +1378,12 @@ Example usage::
 ``jira_bump_after_inactivity``: If this is set, ElastAlert 2 will only comment on tickets that have been inactive for at least this many days.
 It only applies if ``jira_bump_tickets`` is true. Default is 0 days.
 
+.. note:: 
+   **API Migration Notice**: Starting May 1, 2025, Atlassian deprecated the legacy JQL search endpoints. ElastAlert 2 
+   now uses the Jira client's ``enhanced_search_issues`` method for bumping logic, which automatically uses the new 
+   Jira API endpoints internally. This change is transparent for users with compatible Jira library versions (3.10.5+). 
+   No configuration changes required.
+
 Arbitrary Jira fields:
 
 ElastAlert 2 supports setting any arbitrary Jira field that your Jira issue supports. For example, if you had a custom field, called "Affected User", you can set it by providing that field name in ``snake_case`` prefixed with ``jira_``.  These fields can contain primitive strings or arrays of strings. Note that when you create a custom field in your Jira server, internally, the field is represented as ``customfield_1111``. In ElastAlert 2, you may refer to either the public facing name OR the internal representation.
@@ -1417,6 +1424,24 @@ Example usage::
       - "lark"
     lark_bot_id: "your lark bot id"
     lark_msgtype: "text"
+
+LINE Messaging API
+~~~~~~~~~~~~~~~~~~
+
+LINE Messaging API will send notification to a Line application. The body of the notification is formatted the same as with other alerters.
+
+Required:
+
+``line_channel_access_token``: channel access token
+
+``line_to``: user id
+
+Example usage::
+
+    alert:
+      - "line"
+    line_channel_access_token: "Your channel access token"
+    line_to: "Your user id"
 
 Matrix Hookshot
 ~~~~~~~~~~~~~~~
@@ -2592,7 +2617,7 @@ Example usage::
       - webex_webhook
     alert_text_type: alert_text_only
     webex_webhook_id: "your webex incoming webhook id"
-    webex_webhook: "markdown"
+    webex_webhook_msgtype: "markdown"
 
 WorkWechat
 ~~~~~~~~~~

@@ -184,6 +184,7 @@ oneOf:
       threshold_cur: {type: number}
       min_doc_count: {type: integer}
       percentile_range: {type: integer}
+      metric_agg_script: {type: [string, object]}
 
   - title: Flatline
     required: [threshold, timeframe]
@@ -231,6 +232,7 @@ oneOf:
       bucket_interval: *timeframe
       sync_bucket_interval: {type: boolean}
       metric_format_string: {type: string}
+      metric_agg_script: {type: [string, object]}
 
   - title: Percentage Match
     required: [match_bucket_filter]
@@ -307,6 +309,7 @@ properties:
   use_local_time: {type: boolean}
   custom_pretty_ts_format: {type: string}
   match_enhancements: {type: array, items: {type: string}}
+  jinja_filters: {type: array, items: {type: string}}
   query_key: *arrayOfString
   replace_dots_in_field_names: {type: boolean}
   scan_entire_timeframe: {type: boolean}
@@ -658,6 +661,10 @@ properties:
   ### Lark
   lark_bot_id: { type: string }
   lark_msgtype: { type: string, enum: [ 'text' ] }
+
+  ### LINE Messaging API
+  line_channel_access_token: {type: string}
+  line_to: {type: string}
 
   ### Matrix Hookshot
   matrixhookshot_ca_certs: {type: [boolean, string]}

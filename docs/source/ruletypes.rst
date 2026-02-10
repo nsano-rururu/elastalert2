@@ -110,6 +110,8 @@ Rule Configuration Cheat Sheet
 +--------------------------------------------------------------+           |
 | ``match_enhancements`` (list of strs, no default)            |           |
 +--------------------------------------------------------------+           |
+| ``jinja_filters`` (list of strs, no default)                 |           |
++--------------------------------------------------------------+           |
 | ``top_count_number`` (int, default 5)                        |           |
 +--------------------------------------------------------------+           |
 | ``top_count_keys`` (list of strs)                            |           |
@@ -959,6 +961,12 @@ is calculated and in the case of aggregated alerts, right before the alert is se
 The enhancements should be specified as
 ``module.file.EnhancementName``. See :ref:`Enhancements` for more information. (Optional, list of strings, no default)
 
+jinja_filters
+^^^^^^^^^^^^^^^^^^
+
+``jinja_filters``: A list of custom `Jinja2 filters <https://jinja.palletsprojects.com/en/stable/api/#writing-filters>`_ to load.
+The filters should be specified as ``module.file.ClassName``. See :ref:`Custom Jinja2 Filters` for more information. (Optional, list of strings, no default)
+
 run_enhancements_first
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1589,7 +1597,12 @@ Optional:
 ``query_key``: Group metric calculations by this field. For each unique value of the ``query_key`` field, the metric will be calculated and
 evaluated separately against the threshold(s).
 
-``metric_agg_script``: A `Painless` formatted script describing how to calculate your metric on-the-fly::
+``metric_agg_script``: A `Painless` formatted script describing how to calculate your metric on-the-fly. This can be either a string or a dictionary::
+
+    metric_agg_key: myScriptedMetric
+    metric_agg_script: "doc['field1'].value * doc['field2'].value"
+
+Or::
 
     metric_agg_key: myScriptedMetric
     metric_agg_script:
