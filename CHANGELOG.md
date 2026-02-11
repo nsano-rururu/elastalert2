@@ -7,7 +7,7 @@
 - None
 
 ## Other changes
-- None
+- [Docs] Clarified Slack webhook URL documentation as it related to legacy vs app webhooks - [#1745](https://github.com/jertel/elastalert2/pull/1745) - @jertel
 
 # 2.28.0
 
