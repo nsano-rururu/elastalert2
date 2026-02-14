@@ -32,7 +32,7 @@ See our [security policy][13] for reporting urgent vulnerabilities.
 
 ElastAlert 2 is licensed under the [Apache License, Version 2.0][5].
 
-[0]: https://github.com/yelp/elastalert
+[0]: https://github.com/YelpArchive/elastalert
 [1]: https://github.com/jertel/elastalert2/blob/master/examples/config.yaml.example
 [2]: https://hub.docker.com/r/jertel/elastalert2
 [3]: https://elastalert2.readthedocs.io/
